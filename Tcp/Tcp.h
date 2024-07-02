@@ -3,6 +3,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_Tcp.h"
 #include "TcpServer.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class TcpClass; };
 QT_END_NAMESPACE
@@ -15,6 +16,10 @@ public:
     Tcp(QWidget *parent = nullptr);
     ~Tcp();
 
+    
 private:
     Ui::TcpClass *ui;
+
+protected slots:
+    void showNum(int num);
 };

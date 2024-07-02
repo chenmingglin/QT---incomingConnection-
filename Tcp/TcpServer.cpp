@@ -4,6 +4,8 @@
 TcpServer::TcpServer(QObject *parent,unsigned short port)
 	: QTcpServer(parent)
 {
+	m_num = 0;
+	emit sendNum(m_num);
 	this->listen(QHostAddress::Any, port);
 	if (this->isListening())
 	{
@@ -24,7 +26,9 @@ void TcpServer::incomingConnection(qintptr handle)
 		return;
 	}
 	m_clientlist.append(client);
-
+	
+	m_num++;
+	emit sendNum(m_num);
 	connect(client, &QTcpSocket::readyRead, this, &TcpServer::onReadyRead);
 	connect(client, &QTcpSocket::disconnected, this, &TcpServer::onDisConnected);
 }
@@ -38,6 +42,11 @@ void TcpServer::broadCast(const QByteArray& data, QTcpSocket* sender)
 			clientSocket->write(data);
 		}
 	}
+}
+
+int TcpServer::getNum() const
+{
+	return m_num;
 }
 
 void TcpServer::onDisConnected()
@@ -54,7 +63,9 @@ void TcpServer::onDisConnected()
 	//从客户端列表移除客户端并删除
 	m_clientlist.removeOne(socket);
 	socket->deleteLater();
-
+	qDebug() << "客户端断开！";
+	m_num--;
+	emit sendNum(m_num);
 }
 
 
